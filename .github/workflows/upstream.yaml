@@ -25,7 +25,7 @@ jobs:
       id: sync
       uses: atomlong/Sync-With-Upstream-action@master
       with:
-        upstream_repository: https://github.com/SonaliBendre/del-tes
+        upstream_repository: SonaliBendre/del-tes
         upstream_branch: master
         target_branch: master
         git_pull_args: --ff-only                    # optional arg use, defaults to simple 'pull'
