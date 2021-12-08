@@ -514,6 +514,14 @@ try:
     qbclient.search_install_plugin(SEARCH_PLUGINS)
 except KeyError:
     SEARCH_PLUGINS = None
+try:
+    HEROKU_API = getConfig('HEROKU_API')
+    HEROKU_APP = getConfig('HEROKU_APP')
+    if len(HEROKU_API) == 0 or len(HEROKU_APP)==0:
+        raise KeyError
+except KeyError:
+    HEROKU_API = None
+    HEROKU_APP = None    
 
 updater = tg.Updater(token=BOT_TOKEN, request_kwargs={'read_timeout': 30, 'connect_timeout': 15})
 bot = updater.bot
