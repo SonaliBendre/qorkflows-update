@@ -136,6 +136,7 @@ class QbitTorrent:
                 self.client.auth_log_out()
                 self.updater.cancel()
             return
+        self.get_info = 0
         try:
             tor_info = tor_info[0]
             if tor_info.state == "metaDL":
@@ -239,11 +240,8 @@ class QbitTorrent:
                 self.client.torrents_delete(torrent_hashes=self.ext_hash)
                 self.client.auth_log_out()
                 self.updater.cancel()
-        except (IndexError, NameError):
-            self.get_info += 1
-            if self.get_info > 10:
-                self.client.auth_log_out()
-                self.updater.cancel()
+        except:
+            pass
 
 def get_confirm(update, context):
     query = update.callback_query
