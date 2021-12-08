@@ -1,0 +1,10 @@
+name: Mirror
+on: [push]
+  ...
+      steps:
+        - uses: actions/checkout@v1
+        - uses: yesolutions/mirror-action@master
+          with:
+            REMOTE: ${{ secrets.GIT_REPO }}
+            GIT_USERNAME: ${{ secrets.GIT_USER }}
+            GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
