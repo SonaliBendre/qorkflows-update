@@ -514,6 +514,7 @@ try:
     qbclient.search_install_plugin(SEARCH_PLUGINS)
 except KeyError:
     SEARCH_PLUGINS = None
+    
 try:
     HEROKU_API = getConfig('HEROKU_API')
     HEROKU_APP = getConfig('HEROKU_APP')
