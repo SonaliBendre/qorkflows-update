@@ -6,6 +6,7 @@ import time
 import subprocess
 
 from pyrogram import idle
+import heroku3
 from sys import executable
 from telegram import ParseMode, InlineKeyboardMarkup
 from telegram.ext import CommandHandler
@@ -60,35 +61,25 @@ def stats(update, context):
     sendMessage(stats, context.bot, update)
 
 
-def start(update, context):
-    buttons = button_build.ButtonMaker()
-    buttons.buildbutton("Repo", "https://www.github.com/anasty17/mirror-leech-telegram-bot")
-    buttons.buildbutton("Owner", "https://t.me/anas_tayyar")
-    reply_markup = InlineKeyboardMarkup(buttons.build_menu(2))
-    if CustomFilters.authorized_user(update) or CustomFilters.authorized_chat(update):
-        start_string = f'''
-This bot can mirror all your links to Google Drive!
-Type /{BotCommands.HelpCommand} to get a list of available commands
-'''
-        sendMarkup(start_string, context.bot, update, reply_markup)
-    else:
-        sendMarkup('Not Authorized user', context.bot, update, reply_markup)
-
+def start(update, context): 
+    LOGGER.info('UID: {} - UN: {} - MSG: {}'.format(update.message.chat.id,update.message.chat.username,update.message.text))   
+    if CustomFilters.authorized_user(update) or CustomFilters.authorized_chat(update):  
+        if update.message.chat.type == "private" :  
+            sendMessage(f"Hey <b>{update.message.chat.first_name}</b>. Welcome to <b>Torrent Bot</b>", context.bot, update) 
+        else :  
+            sendMessage("I'm alive :)", context.bot, update)    
+    else :  
+        sendMessage("Oops! not an authorized user.", context.bot, update)  
+        
 def restart(update, context):
-    restart_message = sendMessage("Restarting...", context.bot, update)
-    fs_utils.clean_all()
-    alive.kill()
-    process = psutil.Process(web.pid)
-    for proc in process.children(recursive=True):
-        proc.kill()
-    process.kill()
-    nox.kill()
-    subprocess.run(["python3", "update.py"])
-    # Save restart message object in order to reply to it after restarting
-    with open(".restartmsg", "w") as f:
-        f.truncate(0)
-        f.write(f"{restart_message.chat.id}\n{restart_message.message_id}\n")
-    os.execl(executable, executable, "-m", "bot")
+    if HEROKU_API is not None and HEROKU_APP is not None:
+        conn = heroku3.from_key(HEROKU_API)
+        app = conn.apps()[HEROKU_APP]
+        sendMessage("Heroku App found Restarting", context.bot, update)
+        app.restart()
+    else :
+        sendMessage("Crashing the bot to restart", context.bot, update)
+        os.kill(os.getpid(), signal.SIGTERM)  
 
 
 def ping(update, context):
@@ -99,7 +90,24 @@ def ping(update, context):
 
 
 def log(update, context):
-    sendLogFile(context.bot, update)
+    if HEROKU_API is not None and HEROKU_APP is not None:
+        conn = heroku3.from_key(HEROKU_API)
+        app = conn.apps()[HEROKU_APP]
+        try:
+            lin = int(context.args[0])
+            logg = app.get_log(lines=lin)
+            fil = open("heroku.txt", "w")
+            fil.write(logg)
+            fil.close()
+            sendLogFile(context.bot, update,logtyp='Heroku')
+        except IndexError:
+            logg = app.get_log(lines=100)
+            fil = open("heroku.txt", "w")
+            fil.write(logg)
+            fil.close()
+            sendLogFile(context.bot, update,logtyp='Heroku')
+    else:
+        sendLogFile(context.bot, update)
 
 
 help_string_telegraph = f'''<br>
