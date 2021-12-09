@@ -36,7 +36,8 @@ jobs:
         upstream_sync_branch: master
         upstream_sync_repo: anasty17/mirror-leech-telegram-bot
         upstream_repo_access_token: ${{ secrets.UPSTREAM_REPO_SECRET }}
-
+        git_config_user: Update And Mirror
+        git_config_email: updateand@mirror.repo
         # Set test_mode true to run tests instead of the true action!!
         test_mode: false
       
