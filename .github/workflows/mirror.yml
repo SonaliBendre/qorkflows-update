@@ -8,6 +8,12 @@ on:
   push:
     branches:
     - '**'
+ 
+  schedule:
+    - cron:  '0 * * * *'
+    # scheduled at 07:00 every Monday and Thursday
+
+  workflow_dispatch:  # click the button on Github repo!  
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
