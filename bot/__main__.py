@@ -90,24 +90,7 @@ def ping(update, context):
 
 
 def log(update, context):
-    if HEROKU_API is not None and HEROKU_APP is not None:
-        conn = heroku3.from_key(HEROKU_API)
-        app = conn.apps()[HEROKU_APP]
-        try:
-            lin = int(context.args[0])
-            logg = app.get_log(lines=lin)
-            fil = open("heroku.txt", "w")
-            fil.write(logg)
-            fil.close()
-            sendLogFile(context.bot, update,logtyp='Heroku')
-        except IndexError:
-            logg = app.get_log(lines=100)
-            fil = open("heroku.txt", "w")
-            fil.write(logg)
-            fil.close()
-            sendLogFile(context.bot, update,logtyp='Heroku')
-    else:
-        sendLogFile(context.bot, update)
+    sendLogFile(context.bot, update)
 
 
 help_string_telegraph = f'''<br>
