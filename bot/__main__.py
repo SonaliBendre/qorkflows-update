@@ -4,6 +4,7 @@ import os
 import asyncio
 import time
 import subprocess
+import heroku3
 
 from pyrogram import idle
 from sys import executable
