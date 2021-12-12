@@ -2,6 +2,7 @@ import requests
 import itertools
 import time
 import html
+import threading
 
 from urllib.parse import quote
 from telegram import InlineKeyboardMarkup
@@ -30,7 +31,7 @@ SITES = {
     "all": "All"
 }
 
-SEARCH_LIMIT = 300
+SEARCH_LIMIT = 200
 
 def torser(update, context):
     user_id = update.message.from_user.id
@@ -64,9 +65,11 @@ def torserbut(update, context):
     if user_id != int(data[1]):
         query.answer(text="Not Yours!", show_alert=True)
     elif data[2] == 'api':
+        query.answer()
         button = api_buttons(user_id)
         editMessage('Choose site to search:', message, button)
     elif data[2] == 'plugin':
+        query.answer()
         button = plugin_buttons(user_id)
         editMessage('Choose site to search:', message, button)
     elif data[2] != "cancel":
@@ -77,7 +80,7 @@ def torserbut(update, context):
             editMessage(f"<b>Searching for <i>{key}</i>\nTorrent Site:- <i>{SITES.get(site)}</i></b>", message)
         else:
             editMessage(f"<b>Searching for <i>{key}</i>\nTorrent Site:- <i>{site.capitalize()}</i></b>", message)
-        search(key, site, message, tool)
+        threading.Thread(target=search, args=(key, site, message, tool)).start()
     else:
         query.answer()
         editMessage("Search has been canceled!", message)
