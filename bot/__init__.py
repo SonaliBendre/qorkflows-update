@@ -525,6 +525,6 @@ except KeyError:
     HEROKU_API = None
     HEROKU_APP = None    
 
-updater = tg.Updater(token=BOT_TOKEN, request_kwargs={'read_timeout': 30, 'connect_timeout': 15})
+updater = tg.Updater(token=BOT_TOKEN)
 bot = updater.bot
 dispatcher = updater.dispatcher
