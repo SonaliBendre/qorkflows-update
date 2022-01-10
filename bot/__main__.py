@@ -2,10 +2,10 @@ import shutil, psutil
 import signal
 import os
 import asyncio
-import time
 import subprocess
 import heroku3
 
+from time import time
 from pyrogram import idle
 from sys import executable
 from telegram import ParseMode, InlineKeyboardMarkup
@@ -24,7 +24,7 @@ from .modules import authorize, list, cancel_mirror, mirror_status, mirror, clon
 
 
 def stats(update, context):
-    currentTime = get_readable_time(time.time() - botStartTime)
+    currentTime = get_readable_time(time() - botStartTime)
     total, used, free = shutil.disk_usage('.')
     total = get_readable_file_size(total)
     used = get_readable_file_size(used)
@@ -84,9 +84,9 @@ def restart(update, context):
 
 
 def ping(update, context):
-    start_time = int(round(time.time() * 1000))
+    start_time = int(round(time() * 1000))
     reply = sendMessage("Starting Ping", context.bot, update)
-    end_time = int(round(time.time() * 1000))
+    end_time = int(round(time() * 1000))
     editMessage(f'{end_time - start_time} ms', reply)
 
 
