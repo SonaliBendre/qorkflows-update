@@ -1,10 +1,13 @@
-import shutil, psutil
 import signal
 import os
 import asyncio
 import subprocess
 import heroku3
 
+from os import path as ospath, remove as osremove, execl as osexecl
+from subprocess import run as srun
+from asyncio import run as asyrun
+from psutil import disk_usage, cpu_percent, swap_memory, cpu_count, virtual_memory, net_io_counters, Process
 from time import time
 from pyrogram import idle
 from sys import executable
@@ -13,33 +16,32 @@ from telegram.ext import CommandHandler
 
 from wserver import start_server_async
 from bot import bot, app, dispatcher, updater, botStartTime, IGNORE_PENDING_REQUESTS, IS_VPS, PORT, alive, web, OWNER_ID, AUTHORIZED_CHATS, LOGGER, Interval, nox, HEROKU_API, HEROKU_APP, rss_session
-from bot.helper.ext_utils import fs_utils
-from bot.helper.telegram_helper.bot_commands import BotCommands
-from bot.helper.telegram_helper.message_utils import sendMessage, sendMarkup, editMessage, sendLogFile
+from .helper.ext_utin_uls.fs_utils import start_cleanup, clean_all, exit_cleap
+from .helper.telegram_helper.bot_commands import BotCommands
+from .helper.telegram_helper.message_utils import sendMessage, sendMarkup, editMessage, sendLogFile
 from .helper.ext_utils.telegraph_helper import telegraph
 from .helper.ext_utils.bot_utils import get_readable_file_size, get_readable_time
 from .helper.telegram_helper.filters import CustomFilters
-from bot.helper.telegram_helper import button_build
+from .helper.telegram_helper.button_build import ButtonMaker
 from .modules import authorize, list, cancel_mirror, mirror_status, mirror, clone, watch, shell, eval, delete, speedtest, count, leech_settings, search, rss
 
 
 def stats(update, context):
     currentTime = get_readable_time(time() - botStartTime)
-    total, used, free = shutil.disk_usage('.')
+    total, used, free, disk= disk_usage('/')
     total = get_readable_file_size(total)
     used = get_readable_file_size(used)
     free = get_readable_file_size(free)
-    sent = get_readable_file_size(psutil.net_io_counters().bytes_sent)
-    recv = get_readable_file_size(psutil.net_io_counters().bytes_recv)
-    cpuUsage = psutil.cpu_percent(interval=0.5)
-    disk = psutil.disk_usage('/').percent
-    p_core = psutil.cpu_count(logical=False)
-    t_core = psutil.cpu_count(logical=True)
-    swap = psutil.swap_memory()
+    sent = get_readable_file_size(net_io_counters().bytes_sent)
+    recv = get_readable_file_size(net_io_counters().bytes_recv)
+    cpuUsage = cpu_percent(interval=0.5)
+    p_core = cpu_count(logical=False)
+    t_core = cpu_count(logical=True)
+    swap = swap_memory()
     swap_p = swap.percent
     swap_t = get_readable_file_size(swap.total)
     swap_u = get_readable_file_size(swap.used)
-    memory = psutil.virtual_memory()
+    memory = virtual_memory()
     mem_p = memory.percent
     mem_t = get_readable_file_size(memory.total)
     mem_a = get_readable_file_size(memory.available)
@@ -192,7 +194,7 @@ help_string = f'''
 '''
 
 def bot_help(update, context):
-    button = button_build.ButtonMaker()
+    button = ButtonMaker()
     button.buildbutton("Other Commands", f"https://telegra.ph/{help}")
     reply_markup = InlineKeyboardMarkup(button.build_menu(1))
     sendMarkup(help_string, context.bot, update, reply_markup)
@@ -233,15 +235,15 @@ botcmds = [
 
 def main():
     # bot.set_my_commands(botcmds)
-    fs_utils.start_cleanup()
+    start_cleanup()
     if IS_VPS:
-        asyncio.run(start_server_async(PORT))
+        asyrun(start_server_async(PORT))
     # Check if the bot is restarting
-    if os.path.isfile(".restartmsg"):
+    if ospath.isfile(".restartmsg"):
         with open(".restartmsg") as f:
             chat_id, msg_id = map(int, f)
         bot.edit_message_text("Restarted successfully!", chat_id, msg_id)
-        os.remove(".restartmsg")
+        osremove(".restartmsg")
     elif OWNER_ID:
         try:
             text = "<b>Bot Restarted!</b>"
@@ -270,7 +272,7 @@ def main():
     dispatcher.add_handler(log_handler)
     updater.start_polling(drop_pending_updates=IGNORE_PENDING_REQUESTS)
     LOGGER.info("Bot Started!")
-    signal.signal(signal.SIGINT, fs_utils.exit_clean_up)
+    signal.signal(signal.SIGINT, exit_clean_up)
     if rss_session is not None:
         rss_session.start()
 
