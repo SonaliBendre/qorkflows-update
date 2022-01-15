@@ -7,7 +7,7 @@ import heroku3
 from os import path as ospath, remove as osremove, execl as osexecl
 from subprocess import run as srun
 from asyncio import run as asyrun
-from psutil import disk_usage, cpu_percent, swap_memory, cpu_count, virtual_memory, net_io_counters, Process
+from psutil import disk_usage, cpu_percent, swap_memory, cpu_count, virtual_memory, net_io_counters, Process as psprocess
 from time import time
 from pyrogram import idle
 from sys import executable
@@ -82,6 +82,7 @@ def restart(update, context):
     else :
         sendMessage("Crashing the bot to restart", context.bot, update)
         os.kill(os.getpid(), signal.SIGTERM)
+
 
 
 
