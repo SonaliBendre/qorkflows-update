@@ -82,7 +82,10 @@ class YoutubeDLHelper:
                     self.downloaded_bytes += chunk_size
                 else:
                     try:
-                        self.size = d['total_bytes']
+                        if d.get('total_bytes'):
+                            self.size = d['total_bytes']
+                        else:
+                            raise KeyError
                     except KeyError:
                         if d.get('total_bytes_estimate'):
                             self.size = d['total_bytes_estimate']
@@ -159,8 +162,6 @@ class YoutubeDLHelper:
     def add_download(self, link, path, name, qual, playlist):
         if playlist:
             self.opts['ignoreerrors'] = True
-        if "hotstar" in link or "sonyliv" in link:
-            self.opts['geo_bypass_country'] = 'IN'
         self.__gid = ''.join(random.SystemRandom().choices(string.ascii_letters + string.digits, k=10))
         self.__onDownloadStart()
         if qual.startswith('ba/b'):
