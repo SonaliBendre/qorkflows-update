@@ -4,7 +4,6 @@ import heroku3
 
 from os import path as ospath, remove as osremove, execl as osexecl
 from subprocess import run as srun
-from asyncio import run as asyrun
 from psutil import disk_usage, cpu_percent, swap_memory, cpu_count, virtual_memory, net_io_counters, Process as psprocess
 from time import time
 from pyrogram import idle
@@ -12,7 +11,7 @@ from sys import executable
 from telegram import ParseMode, InlineKeyboardMarkup
 from telegram.ext import CommandHandler
 
-from wserver import start_server_async
+
 from bot import bot, app, dispatcher, updater, botStartTime, IGNORE_PENDING_REQUESTS, IS_VPS, PORT, alive, web, OWNER_ID, AUTHORIZED_CHATS, LOGGER, Interval, nox, HEROKU_API, HEROKU_APP, rss_session, a2c
 from .helper.ext_utils.fs_utils import start_cleanup, clean_all, exit_clean_up
 from .helper.telegram_helper.bot_commands import BotCommands
@@ -235,8 +234,6 @@ botcmds = [
 def main():
     # bot.set_my_commands(botcmds)
     start_cleanup()
-    if IS_VPS:
-        asyrun(start_server_async(PORT))
     # Check if the bot is restarting
     if ospath.isfile(".restartmsg"):
         with open(".restartmsg") as f:
