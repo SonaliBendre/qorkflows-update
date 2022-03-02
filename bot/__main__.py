@@ -12,7 +12,7 @@ from telegram import ParseMode, InlineKeyboardMarkup
 from telegram.ext import CommandHandler
 
 
-from bot import bot, app, dispatcher, updater, botStartTime, IGNORE_PENDING_REQUESTS, IS_VPS, PORT, alive, web, AUTHORIZED_CHATS, LOGGER, Interval, nox, HEROKU_API, HEROKU_APP, rss_session, a2c
+from bot import bot, app, dispatcher, updater, botStartTime, IGNORE_PENDING_REQUESTS, PORT, alive, web, AUTHORIZED_CHATS, LOGGER, Interval, HEROKU_API, HEROKU_APP, rss_session, a2c
 from .helper.ext_utils.fs_utils import start_cleanup, clean_all, exit_clean_up
 from .helper.telegram_helper.bot_commands import BotCommands
 from .helper.telegram_helper.message_utils import sendMessage, sendMarkup, editMessage, sendLogFile
@@ -57,9 +57,10 @@ def stats(update, context):
             f'<b>Memory Total:</b> {mem_t}\n'\
             f'<b>Memory Free:</b> {mem_a}\n'\
             f'<b>Memory Used:</b> {mem_u}\n'
-    sendMessage(stats, context.bot, update)
+    sendMessage(stats, context.bot, update.message)
 
 
+<<<<<<< HEAD
 def start(update, context): 
     LOGGER.info('UID: {} - UN: {} - MSG: {}'.format(update.message.chat.id,update.message.chat.username,update.message.text))   
     if CustomFilters.authorized_user(update) or CustomFilters.authorized_chat(update):  
@@ -81,17 +82,52 @@ def restart(update, context):
         os.kill(os.getpid(), signal.SIGTERM)
 
 
+=======
+def start(update, context):
+    buttons = ButtonMaker()
+    buttons.buildbutton("Repo", "https://www.github.com/anasty17/mirror-leech-telegram-bot")
+    buttons.buildbutton("Report Group", "https://t.me/+PRRzqHd31XY3ZWZk")
+    reply_markup = InlineKeyboardMarkup(buttons.build_menu(2))
+    if CustomFilters.authorized_user(update) or CustomFilters.authorized_chat(update):
+        start_string = f'''
+This bot can mirror all your links to Google Drive!
+Type /{BotCommands.HelpCommand} to get a list of available commands
+'''
+        sendMarkup(start_string, context.bot, update.message, reply_markup)
+    else:
+        sendMarkup('Not Authorized user, deploy your own mirror-leech bot', context.bot, update.message, reply_markup)
+
+def restart(update, context):
+    restart_message = sendMessage("Restarting...", context.bot, update.message)
+    if Interval:
+        Interval[0].cancel()
+    alive.kill()
+    procs = psprocess(web.pid)
+    for proc in procs.children(recursive=True):
+        proc.kill()
+    procs.kill()
+    clean_all()
+    srun(["python3", "update.py"])
+    a2cproc = psprocess(a2c.pid)
+    for proc in a2cproc.children(recursive=True):
+        proc.kill()
+    a2cproc.kill()
+    with open(".restartmsg", "w") as f:
+        f.truncate(0)
+        f.write(f"{restart_message.chat.id}\n{restart_message.message_id}\n")
+    osexecl(executable, executable, "-m", "bot")
+>>>>>>> faab85bda3cbbd821e8054326c2a5d3115740dd8
 
 
 def ping(update, context):
     start_time = int(round(time() * 1000))
-    reply = sendMessage("Starting Ping", context.bot, update)
+    reply = sendMessage("Starting Ping", context.bot, update.message)
     end_time = int(round(time() * 1000))
     editMessage(f'{end_time - start_time} ms', reply)
 
 
 def log(update, context):
-    sendLogFile(context.bot, update)
+    sendLogFile(context.bot, update.message)
 
 
 help_string_telegraph = f'''<br>
@@ -195,7 +231,7 @@ def bot_help(update, context):
     button = ButtonMaker()
     button.buildbutton("Other Commands", f"https://telegra.ph/{help}")
     reply_markup = InlineKeyboardMarkup(button.build_menu(1))
-    sendMarkup(help_string, context.bot, update, reply_markup)
+    sendMarkup(help_string, context.bot, update.message, reply_markup)
 
 botcmds = [
 
