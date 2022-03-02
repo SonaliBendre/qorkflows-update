@@ -60,63 +60,27 @@ def stats(update, context):
     sendMessage(stats, context.bot, update.message)
 
 
-<<<<<<< HEAD
 def start(update, context): 
     LOGGER.info('UID: {} - UN: {} - MSG: {}'.format(update.message.chat.id,update.message.chat.username,update.message.text))   
     if CustomFilters.authorized_user(update) or CustomFilters.authorized_chat(update):  
         if update.message.chat.type == "private" :  
-            sendMessage(f"Hey <b>{update.message.chat.first_name}</b>. Welcome to <b>Torrent Bot</b>", context.bot, update) 
+            sendMessage(f"Hey <b>{update.message.chat.first_name}</b>. Welcome to <b>Torrent Bot</b>", context.bot, update.message) 
         else :  
-            sendMessage("I'm alive :)", context.bot, update)    
+            sendMessage("I'm alive :)", context.bot, update.message)    
     else :  
-        sendMessage("Oops! not an authorized user.", context.bot, update)  
+        sendMessage("Oops! not an authorized user.", context.bot, update.message)  
         
 def restart(update, context):
     if HEROKU_API is not None and HEROKU_APP is not None:
         conn = heroku3.from_key(HEROKU_API)
         app = conn.apps()[HEROKU_APP]
-        sendMessage("Heroku App found Restarting", context.bot, update)
+        sendMessage("Heroku App found Restarting", context.bot, update.message)
         app.restart()
     else :
-        sendMessage("Crashing the bot to restart", context.bot, update)
+        sendMessage("Crashing the bot to restart", context.bot, update.message)
         os.kill(os.getpid(), signal.SIGTERM)
 
 
-=======
-def start(update, context):
-    buttons = ButtonMaker()
-    buttons.buildbutton("Repo", "https://www.github.com/anasty17/mirror-leech-telegram-bot")
-    buttons.buildbutton("Report Group", "https://t.me/+PRRzqHd31XY3ZWZk")
-    reply_markup = InlineKeyboardMarkup(buttons.build_menu(2))
-    if CustomFilters.authorized_user(update) or CustomFilters.authorized_chat(update):
-        start_string = f'''
-This bot can mirror all your links to Google Drive!
-Type /{BotCommands.HelpCommand} to get a list of available commands
-'''
-        sendMarkup(start_string, context.bot, update.message, reply_markup)
-    else:
-        sendMarkup('Not Authorized user, deploy your own mirror-leech bot', context.bot, update.message, reply_markup)
-
-def restart(update, context):
-    restart_message = sendMessage("Restarting...", context.bot, update.message)
-    if Interval:
-        Interval[0].cancel()
-    alive.kill()
-    procs = psprocess(web.pid)
-    for proc in procs.children(recursive=True):
-        proc.kill()
-    procs.kill()
-    clean_all()
-    srun(["python3", "update.py"])
-    a2cproc = psprocess(a2c.pid)
-    for proc in a2cproc.children(recursive=True):
-        proc.kill()
-    a2cproc.kill()
-    with open(".restartmsg", "w") as f:
-        f.truncate(0)
-        f.write(f"{restart_message.chat.id}\n{restart_message.message_id}\n")
-    osexecl(executable, executable, "-m", "bot")
->>>>>>> faab85bda3cbbd821e8054326c2a5d3115740dd8
 
 
 def ping(update, context):
