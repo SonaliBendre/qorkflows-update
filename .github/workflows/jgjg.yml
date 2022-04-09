@@ -1,0 +1,21 @@
+name: Jgjg
+
+on:
+  schedule:
+    - cron: '45 02 * * *'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.JGJG_HEROKU_API_KEY}}
+          heroku_email: ${{secrets.JGJG_HEROKU_EMAIL}}
+          heroku_app_name: ${{secrets.JGJG_HEROKU_APP_NAME}}
+          usedocker: true
+          docker_heroku_process_type: web
+          stack: "container"
+          region: "us"
