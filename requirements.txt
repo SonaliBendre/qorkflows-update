@@ -23,8 +23,8 @@ python-magic
 python-telegram-bot
 qbittorrent-api
 requests
-speedtest-cli
 six
+speedtest-cli
 telegraph
 tenacity
 tgCrypto
