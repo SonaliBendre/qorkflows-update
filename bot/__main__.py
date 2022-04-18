@@ -1,4 +1,4 @@
-import signal, SIGINT
+from signal import signal, SIGINT
 import heroku3
 
 
