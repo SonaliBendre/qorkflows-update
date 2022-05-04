@@ -25,7 +25,7 @@ def __onDownloadStarted(api, gid):
                 return
             if STOP_DUPLICATE and not dl.getListener().isLeech:
                 LOGGER.info('Checking File/Folder if already in Drive...')
-                sname = download.name
+                sname = dl.name()
                 if dl.getListener().isZip:
                     sname = sname + ".zip"
                 elif dl.getListener().extract:
@@ -42,7 +42,7 @@ def __onDownloadStarted(api, gid):
             if any([ZIP_UNZIP_LIMIT, TORRENT_DIRECT_LIMIT, STORAGE_THRESHOLD]):
                 sleep(1)
                 limit = None
-                size = api.get_download(gid).total_length
+                size = dl.size_raw()
                 arch = any([dl.getListener().isZip, dl.getListener().extract])
                 if STORAGE_THRESHOLD is not None:
                     acpt = check_storage_threshold(size, arch, True)
